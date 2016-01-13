@@ -1,0 +1,8 @@
+__title__ = 'geohash'
+__summary__ = 'Library for searching in geographic locations'
+__uri__ = 'https://github.com/matthewnorman/geosearch'
+__version__ = '0.0.1.dev0'
+__author__ = 'Matthew Norman'
+__email__ = 'None'
+__license__ = 'MIT'
+__copyright__ = '2015 Matthew Norman'
