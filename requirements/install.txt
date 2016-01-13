@@ -1,2 +1,3 @@
 -e git://github.com/hkwi/python-geohash.git@107595c878f2339068e68ffdf102dba23b87306a#egg=python_geohash-0.8.5
 PyTrie==0.2
+haversine==0.4.4
