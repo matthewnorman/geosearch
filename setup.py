@@ -22,7 +22,7 @@ with open(os.path.join(here, 'README.md'), encoding='utf-8') as f:
 
 about = {}
 
-with open(os.path.join(here, "__about__.py")) as f:
+with open(os.path.join(here, "geosearch", "__about__.py")) as f:
     exec(f.read(), about)
 
 setup(
