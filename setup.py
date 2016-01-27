@@ -51,6 +51,5 @@ setup(
     zip_safe=True,
     install_requires=reqs,
     setup_requires=['setuptools-git'],
-    entry_points={'console_scripts':
-                      ['run_export = exportlib.__main__:main']},
+
 )
