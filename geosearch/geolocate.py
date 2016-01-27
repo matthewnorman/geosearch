@@ -92,6 +92,7 @@ class LatLonGeolocator():
 
             dist = min(overall_lng, overall_lat)
             if dist < radius:
+                tmp_hashcode = tmp_hashcode[:-1]
                 break
 
         if tmp_hashcode == '':
@@ -111,7 +112,7 @@ class LatLonGeolocator():
 
         for point_id in possible_points:
             point = self.points_by_id[point_id]
-            dist = haversine(centerpoint, point)
+            dist = 1000 * haversine(centerpoint, point)
             if dist <= radius:
                 result_values.append((point_id, dist))
 

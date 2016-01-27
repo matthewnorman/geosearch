@@ -1,7 +1,10 @@
 import pytest
+import random
+import geohash
+from haversine import haversine
 from unittest import mock
 
-import geosearch
+from geosearch import geolocate
 
 
 def test_encoding_decoding():
@@ -11,7 +14,7 @@ def test_encoding_decoding():
     """
 
     ID = 1
-    geolocator = geosearch.LatLonGeolocator()
+    geolocator = geolocate.LatLonGeolocator()
     geolocator._encode_and_store_(latitude=51.499167,
                                   longitude=-0.124722,
                                   ID=ID)
@@ -26,7 +29,7 @@ def test_adjoining_boxes():
     :return:
     """
 
-    geolocator = geosearch.LatLonGeolocator()
+    geolocator = geolocate.LatLonGeolocator()
     hashcode = 'gcpuvpjhmu89'
 
     with pytest.raises(ValueError):
@@ -52,7 +55,7 @@ def test_proximity_search():
     :return:
     """
 
-    geolocator = geosearch.LatLonGeolocator()
+    geolocator = geolocate.LatLonGeolocator()
     geolocator.add_location(latitude=51.499168, longitude=-0.124722, ID=2)
     geolocator.add_location(latitude=51.499178, longitude=-0.124722, ID=3)
     geolocator.add_location(latitude=51.499268, longitude=-0.124722, ID=4)
@@ -64,3 +67,43 @@ def test_proximity_search():
                                           radius=1000)
 
     assert results == [2, 3, 4, 5]
+
+
+def test_proximity_search_long():
+    """
+    Create a very, very long test that runs to find things.
+    :return:
+    """
+
+    generated_locations = {}
+    radius = 10000
+
+    for ID in range(1000):
+        generated_locations[ID] = {
+            'latitude': 51.5 + random.uniform(-0.5, 0.5),
+            'longitude': 0.0 + random.uniform(-0.5, 0.5)
+        }
+
+    geolocator = geolocate.LatLonGeolocator()
+    for ID, latlon in generated_locations.items():
+        geolocator.add_location(latitude=latlon['latitude'],
+                                longitude=latlon['longitude'],
+                                ID=ID)
+
+    results = geolocator.proximity_search(latitude=51.5,
+                                          longitude=0.0,
+                                          radius=radius)
+
+    for result in results:
+        location = generated_locations[result]
+        dist = haversine((51.5, 0.0),
+                         (location['latitude'],
+                          location['longitude'])) * 1000
+        assert dist <= radius
+
+    neg_results = generated_locations.keys() - results
+    for ID in neg_results:
+        location = generated_locations[ID]
+        point = (location['latitude'], location['longitude'])
+        dist = 1000 * haversine((51.5, 0.0), point)
+        assert dist > radius
